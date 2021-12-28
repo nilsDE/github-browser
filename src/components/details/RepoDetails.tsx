@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useEffect, useState, useRef } from 'react';
 import { Button, Card, Image } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -16,11 +18,11 @@ const RepoDetails: React.FC = () => {
     const [repoDetails, setRepoDetails] = useState<RepositoryDetails>();
     const [otherRepos, setOtherRepos] = useState<RepositoryDetails[]>();
 
-    const getReposOfUser = async () => {
+    const getReposOfUser = async (repoToGet = repo) => {
         try {
             setIsLoading(true);
             const [currRepo, allRepos] = await Promise.all([
-                axiosInstance.get(`repos/${user}/${repo}`),
+                axiosInstance.get(`repos/${user}/${repoToGet}`),
                 axiosInstance.get(`users/${user}/repos?per_page=10`),
             ]);
 
@@ -102,7 +104,13 @@ const RepoDetails: React.FC = () => {
                                 </span>
                                 <p className='mt-4 mb-2 medium-text'><strong>Other repos of this user (max 10 shown) that might be interesting:</strong></p>
                                 {otherRepos?.map((otherRepo) => (
-                                    <span key={otherRepo.id} className='mb-1 medium-text'>{otherRepo.name}</span>
+                                    <span
+                                        key={otherRepo.id}
+                                        className='mb-1 medium-text cursor-pointer'
+                                        onClick={() => getReposOfUser(otherRepo.name)}
+                                    >
+                                        {otherRepo.name}
+                                    </span>
                                 ))}
                             </div>
                         </div>
