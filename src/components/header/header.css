@@ -1,0 +1,9 @@
+.GithubBrowser-header {
+    background-color: rgb(53, 123, 184);
+    color: white;
+    font-size: 24px;
+    box-shadow: 0px 2px 13px 0px rgba(163,163,163,0.5);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
