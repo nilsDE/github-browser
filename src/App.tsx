@@ -27,7 +27,7 @@ const App: React.FC = () => {
                 const links = linkHeader.split(', ');
                 links.forEach((link) => {
                     if (link.includes('rel="next"')) {
-                        const newNextLink = link.match(/&since=(.*?)>/)?.[1] || '';
+                        const newNextLink = link.match(/(&|\?)since=(.*?)(>|&)/)?.[2] || '';
                         setNextLink(newNextLink);
                     }
                 });
