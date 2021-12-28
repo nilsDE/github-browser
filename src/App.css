@@ -9,3 +9,11 @@
 .font-italic {
     font-style: italic;
 }
+
+.medium-text {
+    font-size: 14px;
+}
+
+.small-text {
+    font-size: 12px;
+}

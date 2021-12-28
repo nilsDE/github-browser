@@ -1,36 +1,46 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import debounce from 'lodash.debounce';
 import RepoList from './components/list/RepoList';
 import RepoDetails from './components/details/RepoDetails';
 import { Repository } from './components/list/repo.model';
 import Header from './components/header/Header';
-import axiosInstance from './axios';
+import { getPublicRepos, getReposBySearchValue } from './app.service';
+import { extractNextLink } from './app.helpers';
 
 import './app.css';
 
 const App: React.FC = () => {
     const componentUnmounted = useRef(false);
-
+    const nextLinkRef = useRef('');
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState(false);
-    const [nextLink, setNextLink] = useState('');
+    const [searchString, setSearchString] = useState('');
     const [repos, setRepos] = useState<Repository[]>([]);
 
     const getRepos = async (initialPage = false) => {
+        setIsLoading(true);
+        const {
+            data,
+            hasError,
+            headerLinks,
+        } = await getPublicRepos(initialPage, nextLinkRef.current);
+        if (!componentUnmounted.current) {
+            setRepos(data);
+            setIsError(hasError);
+            if (headerLinks) nextLinkRef.current = extractNextLink(headerLinks);
+            setIsLoading(false);
+        }
+    };
+
+    const getSearchedRepos = async (search: string) => {
         try {
             setIsLoading(true);
-            const url = initialPage ? 'repositories' : `repositories${nextLink ? `?since=${nextLink}` : ''}`;
-            const res = await axiosInstance.get(url);
+            const { data, hasError } = await getReposBySearchValue(search);
             if (!componentUnmounted.current) {
-                setRepos(res.data);
-                const linkHeader = res.headers.link;
-                const links = linkHeader.split(', ');
-                links.forEach((link) => {
-                    if (link.includes('rel="next"')) {
-                        const newNextLink = link.match(/(&|\?)since=(.*?)(>|&)/)?.[2] || '';
-                        setNextLink(newNextLink);
-                    }
-                });
+                setRepos(data);
+                setIsError(hasError);
+                nextLinkRef.current = '';
                 setIsLoading(false);
             }
         } catch (error) {
@@ -48,12 +58,19 @@ const App: React.FC = () => {
         getRepos();
     };
 
-    useEffect(() => {
-        getRepos();
-        return () => {
-            componentUnmounted.current = true;
-        };
+    useEffect(() => () => {
+        componentUnmounted.current = true;
     }, []);
+
+    const debounced = useRef(debounce((search) => getSearchedRepos(search), 350));
+
+    useEffect(() => {
+        if (!searchString) {
+            getRepos();
+        } else {
+            debounced.current(searchString);
+        }
+    }, [searchString]);
 
     return (
         <div id='GithubBrowser'>
@@ -67,7 +84,10 @@ const App: React.FC = () => {
                             <RepoList
                                 isLoading={isLoading}
                                 isError={isError}
+                                isSearch={!!searchString}
                                 repos={repos}
+                                searchString={searchString}
+                                setSearchString={setSearchString}
                                 getInitialPage={getInitialPage}
                                 getNextPage={getNextPage}
                             />

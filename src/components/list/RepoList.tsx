@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Card } from 'react-bootstrap';
+import { Button, Card, FormControl, InputGroup } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { Repository } from './repo.model';
 import Error from '../error/Error';
@@ -7,7 +7,10 @@ import Error from '../error/Error';
 interface ListProps {
     isLoading: boolean;
     isError: boolean;
+    isSearch: boolean;
     repos: Repository[];
+    searchString: string;
+    setSearchString: (val: string) => void;
     getInitialPage: () => void;
     getNextPage: () => void;
 }
@@ -16,7 +19,10 @@ const RepoList: React.FC<ListProps> = (props) => {
     const {
         isLoading,
         isError,
+        isSearch,
         repos,
+        searchString,
+        setSearchString,
         getInitialPage,
         getNextPage,
     } = props;
@@ -27,17 +33,27 @@ const RepoList: React.FC<ListProps> = (props) => {
             <div className='d-flex justify-content-between'>
                 <Button
                     variant='secondary'
-                    disabled={isLoading}
+                    disabled={isLoading || isSearch}
                     onClick={getInitialPage}
                 >
-                    {isLoading ? 'Loading...' : 'Initial page'}
+                    <span className='text-nowrap'>{isLoading ? 'Loading...' : 'Initial page'}</span>
                 </Button>
+                <InputGroup className='mx-2'>
+                    <InputGroup.Text id='search-field'>Search repos</InputGroup.Text>
+                    <FormControl
+                        placeholder='Repo name'
+                        aria-label='Repo name'
+                        aria-describedby='search-field'
+                        onChange={(e) => setSearchString(e.target.value)}
+                        value={searchString}
+                    />
+                </InputGroup>
                 <Button
                     variant='secondary'
-                    disabled={isLoading}
+                    disabled={isLoading || isSearch}
                     onClick={getNextPage}
                 >
-                    {isLoading ? 'Loading...' : 'Next page'}
+                    <span className='text-nowrap'>{isLoading ? 'Loading...' : 'Next page'}</span>
                 </Button>
             </div>
             {isError && (
@@ -46,6 +62,12 @@ const RepoList: React.FC<ListProps> = (props) => {
                     btnText='Reload'
                     msg='Click the button below to reload the content of this page:'
                 />
+            )}
+            {isSearch && (
+                <p className='mt-4'>
+                    <strong>Please note: </strong>
+                    The search only returns the first 30 results!
+                </p>
             )}
             {repos.map((repo: Repository) => (
                 <Card key={repo.id} className='my-4 cursor-pointer' onClick={() => navigate(`/${repo.owner.login}/${repo.name}`)}>

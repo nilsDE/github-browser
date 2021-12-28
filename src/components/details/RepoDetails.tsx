@@ -100,9 +100,9 @@ const RepoDetails: React.FC = () => {
                                     <strong># of watchers: </strong>
                                     {repoDetails?.watchers_count || 0}
                                 </span>
-                                <p className='mt-4 mb-2'><strong>Other repos of this user (max 10 shown) that might be interesting:</strong></p>
+                                <p className='mt-4 mb-2 medium-text'><strong>Other repos of this user (max 10 shown) that might be interesting:</strong></p>
                                 {otherRepos?.map((otherRepo) => (
-                                    <span key={otherRepo.id}>{otherRepo.name}</span>
+                                    <span key={otherRepo.id} className='mb-1 medium-text'>{otherRepo.name}</span>
                                 ))}
                             </div>
                         </div>
