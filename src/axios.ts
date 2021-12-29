@@ -5,12 +5,13 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use((config) => {
-    config.params = {
+    const newConfig = config;
+    newConfig.params = {
         client_id: process.env.REACT_APP_GH_CLIENT_ID,
         client_secret: process.env.REACT_APP_GH_CLIENT_SECRET,
         ...config.params,
     };
-    return config;
+    return newConfig;
 });
 
 export default axiosInstance;

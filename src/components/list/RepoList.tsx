@@ -1,5 +1,10 @@
 import React from 'react';
-import { Button, Card, FormControl, InputGroup } from 'react-bootstrap';
+import {
+    Button,
+    Card,
+    FormControl,
+    InputGroup,
+} from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { Repository } from './repo.model';
 import Error from '../error/Error';
@@ -15,7 +20,7 @@ interface ListProps {
     getNextPage: () => void;
 }
 
-const RepoList: React.FC<ListProps> = (props) => {
+const RepoList = (props: ListProps): JSX.Element => {
     const {
         isLoading,
         isError,
@@ -30,7 +35,7 @@ const RepoList: React.FC<ListProps> = (props) => {
 
     return (
         <div className='mx-2 mt-4'>
-            <div className='d-flex justify-content-between'>
+            <div className='d-flex flex-column flex-sm-row justify-content-between'>
                 <Button
                     variant='secondary'
                     disabled={isLoading || isSearch}
@@ -38,7 +43,7 @@ const RepoList: React.FC<ListProps> = (props) => {
                 >
                     <span className='text-nowrap'>{isLoading ? 'Loading...' : 'Initial page'}</span>
                 </Button>
-                <InputGroup className='mx-2'>
+                <InputGroup className='mx-sm-2 my-2 my-sm-0'>
                     <InputGroup.Text id='search-field'>Search repos</InputGroup.Text>
                     <FormControl
                         placeholder='Repo name'
@@ -66,7 +71,7 @@ const RepoList: React.FC<ListProps> = (props) => {
             {isSearch && (
                 <p className='mt-4'>
                     <strong>Please note: </strong>
-                    The search only returns the first 30 results!
+                    The search only ever returns the first 30 results!
                 </p>
             )}
             {repos.map((repo: Repository) => (

@@ -7,7 +7,7 @@ interface ErrorProps {
     msg: string;
 }
 
-const Error: React.FC<ErrorProps> = ({ callback, btnText, msg }) => (
+const Error = ({ callback, btnText, msg }: ErrorProps): JSX.Element => (
     <Card bg='warning' text='white' className='my-4 cursor-pointer'>
         <Card.Header as='h5'>An error has occurred!</Card.Header>
         <Card.Body>

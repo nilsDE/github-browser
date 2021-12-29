@@ -10,7 +10,7 @@ import { extractNextLink } from './app.helpers';
 
 import './app.css';
 
-const App: React.FC = () => {
+const App = (): JSX.Element => {
     const componentUnmounted = useRef(false);
     const nextLinkRef = useRef('');
     const [isLoading, setIsLoading] = useState(false);

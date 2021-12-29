@@ -9,7 +9,7 @@ import Error from '../error/Error';
 
 import './repo-details.css';
 
-const RepoDetails: React.FC = () => {
+const RepoDetails = (): JSX.Element => {
     const { user, repo } = useParams();
     const navigate = useNavigate();
     const componentUnmounted = useRef(false);
@@ -17,6 +17,8 @@ const RepoDetails: React.FC = () => {
     const [isError, setIsError] = useState(false);
     const [repoDetails, setRepoDetails] = useState<RepositoryDetails>();
     const [otherRepos, setOtherRepos] = useState<RepositoryDetails[]>();
+
+    const goBack = () => navigate('/');
 
     const getReposOfUser = async (repoToGet = repo) => {
         try {
@@ -45,8 +47,6 @@ const RepoDetails: React.FC = () => {
         };
     }, []);
 
-    const goBack = () => navigate('/');
-
     if (isError) {
         return (
             <div className='mx-2 mt-4'>
@@ -65,7 +65,9 @@ const RepoDetails: React.FC = () => {
                 {isLoading ? 'Loading...' : 'Back'}
             </Button>
             {isLoading ? (
-                <span>Loading...</span>
+                <div className='d-flex justify-content-center'>
+                    <span>Loading...</span>
+                </div>
             ) : (
                 <Card>
                     <Card.Header as='h5'>Repository Details</Card.Header>
